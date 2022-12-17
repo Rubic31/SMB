@@ -10,17 +10,19 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 
-class ProductRepository(/*private val productDAO: ProductDAO*/ private val firebaseDatabase: FirebaseDatabase, user: FirebaseUser) {
+class ProductRepository(/*private val productDAO: ProductDAO*/ private val firebaseDatabase: FirebaseDatabase, userAuth: FirebaseAuth) {
 
     val allProducts: MutableLiveData<HashMap<String, Product>> =
         MutableLiveData<HashMap<String, Product>>().also {
             it.value = HashMap<String, Product>()
         }
+    val ref = firebaseDatabase.getReference("users/${userAuth.currentUser?.uid}/products")
 
     init {
         //val ref = firebaseDatabase.getReference("users/"+"zbyszek"/*user.uid*/)
         //val people_ref = ref.child("people")
-        firebaseDatabase.getReference(/*"users/"+"zbyszek/"*//*user.uid*/ /*+*/ "products")
+        //firebaseDatabase.getReference(/*"users/"+/*"zbyszek/"*/user.uid /*+*/ "products"...  */ "users/${user.currentUser?.uid}/products")
+        ref
             .addChildEventListener(object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
 
@@ -74,25 +76,26 @@ class ProductRepository(/*private val productDAO: ProductDAO*/ private val fireb
 
     }
 
-    fun insert(product: Product/*, firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()*/) {
-        firebaseDatabase.getReference("products").push().also {
+    fun insert(product: Product /*, firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()*/ ) {
+        ref.push().also {
             product.id = it.ref.key!!
             it.setValue(product)
         }
     }
 
     fun update(product: Product) {
-        var ref = firebaseDatabase.getReference("products/${product.id}")
-        ref.child("name").setValue(product.name)
-        ref.child("price").setValue(product.price)
-        ref.child("quantity").setValue(product.quantity)
-        ref.child("bought").setValue(product.bought)
+        //var ref = firebaseDatabase.getReference("products/${product.id}")
+        val ref_id = ref.child("${product.id}")
+        ref_id.child("name").setValue(product.name)
+        ref_id.child("price").setValue(product.price)
+        ref_id.child("quantity").setValue(product.quantity)
+        ref_id.child("bought").setValue(product.bought)
     }
 
     fun delete(product: Product) =
-        firebaseDatabase.getReference("products/${product.id}").removeValue()
+        ref.child("${product.id}").removeValue()
 
-    fun deleteAll() = firebaseDatabase.getReference("products").removeValue()
+    fun deleteAll() = ref.removeValue()
 
 //    val allProducts = productDAO.getProducts()
 //
