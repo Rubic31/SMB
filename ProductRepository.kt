@@ -18,7 +18,7 @@ class ProductRepository(/*private val productDAO: ProductDAO*/ private val fireb
         }
     //val allPublicProducts takie samo
     
-    val ref = firebaseDatabase.getReference("users/${userAuth?.currentUser?.uid}/products")
+    val ref = firebaseDatabase.getReference("users/${userAuth?.currentUser?.uid/* ?: public*/}/products")
     
     val public_ref = firebaseDatabase.getReference("public")
     val user_ref = firebaseDatabase.getReference(userAuth?.currentUser?.uid ?: "public")
