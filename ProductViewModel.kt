@@ -14,13 +14,15 @@ class ProductViewModel(app: Application) : AndroidViewModel(app) {
     private val repo: ProductRepository
     var firebaseDatabase: FirebaseDatabase
     var firebaseUser: FirebaseUser
+    var firebaseAuth: FirebaseAuth
     val allProducts: MutableLiveData<HashMap<String, Product>>//LiveData<List<Product>>
 
     init {
         firebaseDatabase = FirebaseDatabase.getInstance()
-        firebaseUser = FirebaseAuth.getInstance().currentUser!!
+        //firebaseUser = FirebaseAuth.getInstance().currentUser!!
         //val productDAO = ProductDB.getDatabase(app.applicationContext)!!.getProductDao()
-        repo = ProductRepository(firebaseDatabase, firebaseUser)
+        firebaseAuth = FirebaseAuth.getInstance()
+        repo = ProductRepository(firebaseDatabase, firebaseAuth)
         allProducts = repo.allProducts
     }
 
