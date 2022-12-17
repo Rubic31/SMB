@@ -10,15 +10,21 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 
-class ProductRepository(/*private val productDAO: ProductDAO*/ private val firebaseDatabase: FirebaseDatabase, userAuth: FirebaseAuth) {
+class ProductRepository(/*private val productDAO: ProductDAO*/ private val firebaseDatabase: FirebaseDatabase, private val userAuth: FirebaseAuth?) {
 
     val allProducts: MutableLiveData<HashMap<String, Product>> =
         MutableLiveData<HashMap<String, Product>>().also {
             it.value = HashMap<String, Product>()
         }
-    val ref = firebaseDatabase.getReference("users/${userAuth.currentUser?.uid}/products")
+    //val allPublicProducts takie samo
+    
+    val ref = firebaseDatabase.getReference("users/${userAuth?.currentUser?.uid}/products")
+    
+    val public_ref = firebaseDatabase.getReference("public")
+    val user_ref = firebaseDatabase.getReference(userAuth?.currentUser?.uid ?: "public")
 
     init {
+        //dwa razy public_ref.addChildEvent i tak dalej oraz user_ref.addChild itd
         //val ref = firebaseDatabase.getReference("users/"+"zbyszek"/*user.uid*/)
         //val people_ref = ref.child("people")
         //firebaseDatabase.getReference(/*"users/"+/*"zbyszek/"*/user.uid /*+*/ "products"...  */ "users/${user.currentUser?.uid}/products")
